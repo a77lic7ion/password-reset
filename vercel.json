@@ -1,9 +1,14 @@
 {
-  "buildCommand": "echo 'no build needed'",
+  "buildCommand": "echo 'no build'",
   "outputDirectory": ".",
-  "devCommand": "echo 'no dev needed'",
-  "installCommand": "echo 'no install needed'",
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+  "devCommand": "echo 'no dev'",
+  "installCommand": "echo 'no install'",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    }
   ]
 }

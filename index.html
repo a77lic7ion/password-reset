@@ -479,6 +479,13 @@
 
     let auth = null;
     let db = null;
+    let _signInWithEmailAndPassword = null;
+    let _signOut = null;
+    let _onAuthStateChanged = null;
+    let _query = null;
+    let _collection = null;
+    let _where = null;
+    let _getDocs = null;
 
     async function initFirebase() {
       const [{ initializeApp, getApps, deleteApp }, ...rest] = await Promise.all([
@@ -487,6 +494,13 @@
         import('https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js'),
       ]);
       const [{ initializeAuth, inMemoryPersistence, signInWithEmailAndPassword, signOut, onAuthStateChanged }, { getFirestore, collection, query, where, getDocs, doc, getDoc }] = rest;
+      _signInWithEmailAndPassword = signInWithEmailAndPassword;
+      _signOut = signOut;
+      _onAuthStateChanged = onAuthStateChanged;
+      _query = query;
+      _collection = collection;
+      _where = where;
+      _getDocs = getDocs;
 
       const appName = "elderwatch-reset-admin-" + Math.random().toString(36).slice(2, 8);
       let app;
@@ -499,7 +513,7 @@
       db = getFirestore(app);
 
       // ===== AUTH STATE LISTENER (registered AFTER auth is set) =====
-      onAuthStateChanged(auth, (user) => {
+      _onAuthStateChanged(auth, (user) => {
         if (user) {
           $('loginCard').style.display = 'none';
           $('resetCard').style.display = 'block';
@@ -555,7 +569,7 @@
 
       // Step 1: try Firebase Auth (primary — works everywhere including Vercel)
       try {
-        await signInWithEmailAndPassword(auth, email.trim(), password.trim());
+        await _signInWithEmailAndPassword(auth, email.trim(), password.trim());
         // onAuthStateChanged will swap screens
         $('loginBtn').disabled = false;
         $('loginBtnText').textContent = 'Sign In to Dashboard';
@@ -614,7 +628,7 @@
     // ===== LOGOUT =====
     window.doLogout = async function () {
       try {
-        await signOut(auth);
+        await _signOut(auth);
         setStatus($('resetStatus'), '');
         $('targetEmail').value = '';
         $('newPassword').value = '';
@@ -657,8 +671,8 @@
 
       try {
         // 1. Find staff by email in Firestore
-        const staffQuery = query(collection(db, 'staff'), where('email', '==', targetEmail));
-        const snapshot = await getDocs(staffQuery);
+        const staffQuery = _query(_collection(db, 'staff'), _where('email', '==', targetEmail));
+        const snapshot = await _getDocs(staffQuery);
         if (snapshot.empty) {
           $('resetBtn').disabled = false;
           $('resetBtnText').textContent = 'Reset Password';

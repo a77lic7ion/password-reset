@@ -1,0 +1,9 @@
+{
+  "buildCommand": "echo 'no build needed'",
+  "outputDirectory": ".",
+  "devCommand": "echo 'no dev needed'",
+  "installCommand": "echo 'no install needed'",
+  "routes": [
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
